@@ -1,0 +1,97 @@
+package aarkanoid.gameObjects;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+public abstract class GameObject {
+    protected int x, y;
+    protected int width, height;
+    protected Rectangle bounds;
+    protected BufferedImage texture;
+    protected String texturePath;
+
+    public GameObject(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.bounds = new Rectangle(x, y, width, height);
+        this.texture = null;
+        this.texturePath = null;
+    }
+
+    public GameObject(int x, int y, int width, int height, String texturePath) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.bounds = new Rectangle(x, y, width, height);
+        this.texturePath = texturePath;
+        loadTexture();
+    }
+
+    protected void loadTexture() {
+        try {
+            if (texturePath != null) {
+                // Thử load từ resources trước
+                texture = ImageIO.read(getClass().getClassLoader().getResource(texturePath));
+                if (texture == null) {
+                    // Thử load từ file system
+                    texture = ImageIO.read(new File("res/" + texturePath));
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to load texture: " + texturePath);
+            texture = null;
+        }
+
+        // Nếu không load được texture, tạo texture mặc định
+        if (texture == null) {
+            createFallbackTexture();
+        }
+    }
+
+    protected void createFallbackTexture() {
+        texture = new BufferedImage(Math.max(1, width), Math.max(1, height), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = texture.createGraphics();
+        g2d.setColor(getFallbackColor());
+        g2d.fillRect(0, 0, width, height);
+        g2d.dispose();
+    }
+
+    protected abstract Color getFallbackColor();
+    public abstract void render(Graphics g);
+
+    public void update() {
+        // Cập nhật bounds khi vị trí thay đổi
+        bounds.setLocation(x, y);
+    }
+
+    // Getter methods
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
+    public Rectangle getBounds() {
+        return new Rectangle(bounds); // Trả về bản copy để tránh modify
+    }
+    public BufferedImage getTexture() { return texture; }
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+        bounds.setLocation(x, y);
+    }
+
+    public void setX(int x) {
+        this.x = x;
+        bounds.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+        bounds.y = y;
+    }
+}
