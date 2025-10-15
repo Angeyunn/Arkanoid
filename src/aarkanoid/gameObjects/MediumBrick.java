@@ -1,4 +1,3 @@
-// MediumBrick.java
 package aarkanoid.gameObjects;
 import java.awt.*;
 public class MediumBrick extends Brick {

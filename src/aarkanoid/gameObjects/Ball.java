@@ -7,7 +7,7 @@ public class Ball extends MovableObject {
     private Random random;
     private boolean inPlay;
 
-    public Ball(int x, int y, int width, int height, float dx, float dy) {
+    public Ball(int x, int y, int width, int height, double dx, double dy) {
         super(x, y, width, height, dx, dy);
         this.random = new Random();
         this.inPlay = true;
@@ -19,7 +19,6 @@ public class Ball extends MovableObject {
 
         super.update();
 
-        // Va chạm với tường - DÙNG KÍCH THƯỚC MỚI
         if (x < 0 || x > 800 - width) {
             dx = -dx;
             x = Math.max(0, Math.min(x, 800 - width));
@@ -29,7 +28,6 @@ public class Ball extends MovableObject {
             y = 0;
         }
 
-        // Ra khỏi đáy màn hình - DÙNG KÍCH THƯỚC MỚI
         if (y > 600) {
             inPlay = false;
         }
@@ -40,11 +38,10 @@ public class Ball extends MovableObject {
     }
 
     public void onPaddleCollision(Paddle paddle) {
-        dy = -Math.abs(dy); // Luôn đi lên
+        dy = -Math.abs(dy);
 
-        // Tính góc dựa trên vị trí va chạm
         float hitPos = (x + width/2 - paddle.getX()) / (float)paddle.getWidth();
-        dx = (hitPos - 0.5f) * 10f; // Tăng góc cho màn hình lớn
+        dx = (hitPos - 0.5f)* 10f;
     }
 
     @Override
@@ -69,7 +66,6 @@ public class Ball extends MovableObject {
     }
 
     public void reset() {
-        // DÙNG KÍCH THƯỚC MỚI ĐỂ RESET
         setPosition(800/2 - 8, 600 - 80);
         setVelocity((random.nextBoolean() ? 5 : -5), -5);
         inPlay = true;

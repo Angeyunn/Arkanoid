@@ -35,10 +35,8 @@ public abstract class GameObject {
     protected void loadTexture() {
         try {
             if (texturePath != null) {
-                // Thử load từ resources trước
                 texture = ImageIO.read(getClass().getClassLoader().getResource(texturePath));
                 if (texture == null) {
-                    // Thử load từ file system
                     texture = ImageIO.read(new File("res/" + texturePath));
                 }
             }
@@ -47,7 +45,6 @@ public abstract class GameObject {
             texture = null;
         }
 
-        // Nếu không load được texture, tạo texture mặc định
         if (texture == null) {
             createFallbackTexture();
         }
@@ -65,7 +62,6 @@ public abstract class GameObject {
     public abstract void render(Graphics g);
 
     public void update() {
-        // Cập nhật bounds khi vị trí thay đổi
         bounds.setLocation(x, y);
     }
 
@@ -75,7 +71,7 @@ public abstract class GameObject {
     public int getWidth() { return width; }
     public int getHeight() { return height; }
     public Rectangle getBounds() {
-        return new Rectangle(bounds); // Trả về bản copy để tránh modify
+        return new Rectangle(bounds);
     }
     public BufferedImage getTexture() { return texture; }
 

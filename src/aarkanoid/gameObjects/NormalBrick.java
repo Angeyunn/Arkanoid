@@ -1,4 +1,3 @@
-// NormalBrick.java
 package aarkanoid.gameObjects;
 import java.awt.*;
 public class NormalBrick extends Brick {

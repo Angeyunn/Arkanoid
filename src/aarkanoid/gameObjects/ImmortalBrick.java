@@ -1,4 +1,3 @@
-// ImmortalBrick.java
 package aarkanoid.gameObjects;
 import java.awt.*;
 public class ImmortalBrick extends Brick {

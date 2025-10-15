@@ -16,7 +16,6 @@ public class GameManager {
     private int lives;
     private int level;
 
-    // TĂNG KÍCH THƯỚC MÀN HÌNH
     public static final int SCREEN_WIDTH = 800;
     public static final int SCREEN_HEIGHT = 600;
 
@@ -46,17 +45,14 @@ public class GameManager {
     private void createGameObjects() {
         gameObjects.clear();
 
-        // Paddle - ĐIỀU CHỈNH CHO MÀN HÌNH LỚN
         paddle = new Paddle(SCREEN_WIDTH/2 - 60, SCREEN_HEIGHT - 50, 120, 20);
         gameObjects.add(paddle);
         System.out.println("🎯 Paddle created at: " + paddle.getX() + ", " + paddle.getY());
 
-        // Ball - ĐIỀU CHỈNH CHO MÀN HÌNH LỚN
         ball = new Ball(SCREEN_WIDTH/2 - 8, SCREEN_HEIGHT - 80, 16, 16, 5, -5);
         gameObjects.add(ball);
         System.out.println("⚽ Ball created at: " + ball.getX() + ", " + ball.getY());
 
-        // Tạo bricks với SỐ LƯỢNG NHIỀU HƠN
         createBricks();
         System.out.println("🧱 Created " + (gameObjects.size() - 2) + " bricks");
     }
@@ -77,7 +73,6 @@ public class GameManager {
     }
 
     private Brick createBrickByType(int row, int x, int y) {
-        // PHÂN LOẠI BRICK THEO HÀNG - NHIỀU LOẠI HƠN
         switch (row) {
             case 0: return new ImmortalBrick(x, y);    // Hàng 1: Bất tử
             case 1: return new HardBrick(x, y);        // Hàng 2: Rất cứng
@@ -94,7 +89,6 @@ public class GameManager {
     public void update() {
         if (currentState != GameState.PLAYING) return;
 
-        // Update all objects
         for (GameObject obj : gameObjects) {
             obj.update();
         }
@@ -121,13 +115,12 @@ public class GameManager {
                             objectsToRemove.add(obj);
                         }
                     }
-                    break; // Chỉ xử lý 1 brick mỗi frame
+                    break;
                 }
             }
         }
         gameObjects.removeAll(objectsToRemove);
 
-        // Ball với paddle
         if (ball.getBounds().intersects(paddle.getBounds())) {
             ball.onPaddleCollision(paddle);
         }
@@ -185,7 +178,6 @@ public class GameManager {
         g.drawString("Lives: " + lives, SCREEN_WIDTH - 120, SCREEN_HEIGHT - 30);
         g.drawString("Level: " + level, SCREEN_WIDTH/2 - 30, SCREEN_HEIGHT - 30);
 
-        // Hiển thị số brick còn lại
         int bricksLeft = 0;
         for (GameObject obj : gameObjects) {
             if (obj instanceof Brick && !((Brick) obj).isDestroyed()) {
@@ -273,13 +265,11 @@ public class GameManager {
         currentState = GameState.PLAYING;
     }
 
-    // Getters
     public GameState getCurrentState() { return currentState; }
     public int getScore() { return score; }
     public int getLives() { return lives; }
     public int getLevel() { return level; }
 
-    // Thêm getter cho kích thước màn hình
     public static int getScreenWidth() { return SCREEN_WIDTH; }
     public static int getScreenHeight() { return SCREEN_HEIGHT; }
 }

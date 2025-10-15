@@ -1,4 +1,3 @@
-// StrongBrick.java
 package aarkanoid.gameObjects;
 import java.awt.*;
 public class StrongBrick extends Brick {

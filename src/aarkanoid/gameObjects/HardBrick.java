@@ -1,4 +1,3 @@
-// HardBrick.java
 package aarkanoid.gameObjects;
 import java.awt.*;
 public class HardBrick extends Brick {
