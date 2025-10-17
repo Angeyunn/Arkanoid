@@ -2,6 +2,9 @@ package arkanoid.view;
 
 import arkanoid.model.*;
 import arkanoid.model.brick.*;
+import arkanoid.model.powerup.ExpandPaddlePowerUp;
+import arkanoid.model.powerup.PowerUp;
+import arkanoid.model.powerup.ShrinkPaddlePowerUp;
 
 import java.io.IOException;
 import java.util.List;
@@ -85,15 +88,18 @@ public class TerminalRenderer {
 
         if (obj instanceof Ball) symbol = 'O';
         else if (obj instanceof Paddle) symbol = '=';
+        else if (obj instanceof ExplosiveBrick) symbol = 'E';
         else if (obj instanceof StrongBrick) symbol = 'S';
         else if (obj instanceof UnbreakableBrick) symbol = 'X';
         else if (obj instanceof NormalBrick) symbol = '#';
+        else if (obj instanceof ExpandPaddlePowerUp) symbol = 'P';
+        else if (obj instanceof ShrinkPaddlePowerUp) symbol = 'p';
 
         //Ve vao buffer dua tren toa do va kich thuoc
         for (int i = 0; i < obj.getHeight(); i++) {
             for (int j = 0; j < obj.getWidth(); j++) {
-                int screenX = obj.getX() + j;
-                int screenY = obj.getY() + i;
+                int screenX = (int)obj.getX() + j;
+                int screenY = (int)obj.getY() + i;
                 if (screenY > 0 && screenY < height - 1 && screenX > 0 && screenX < width - 1) {
                     screenBuffer[screenY][screenX] = symbol;
                 }

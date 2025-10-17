@@ -6,6 +6,9 @@ import arkanoid.model.Paddle;
  * Powerup giam kich thuoc paddle
  */
 public class ShrinkPaddlePowerUp extends PowerUp {
+    private static final int WIDTH_DECREASE = 3; //Hang so do dai giam di
+
+    //Ham khoi tao
     public ShrinkPaddlePowerUp(int x, int y, int width, int height, double speed) {
         super(x, y, width, height, speed);
     }
@@ -17,11 +20,12 @@ public class ShrinkPaddlePowerUp extends PowerUp {
 
     @Override
     public void applyEffect(Paddle paddle) {
-        //Logic lam cho paddle ngan di
+        int newWidth = paddle.getWidth() - WIDTH_DECREASE;
+        paddle.setWidth(Math.max(newWidth, 2)); //Chieu rong toi thieu la 2
     }
 
     @Override
     public void removeEffect(Paddle paddle) {
-        //logic thu paddle ve kich thuoc ban dau
+        paddle.setWidth(paddle.getOriginalWidth());
     }
 }
