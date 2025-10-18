@@ -1,12 +1,14 @@
 package arkanoid.model.powerup;
 
 import arkanoid.model.Paddle;
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  * Powerup giam kich thuoc paddle
  */
 public class ShrinkPaddlePowerUp extends PowerUp {
-    private static final int WIDTH_DECREASE = 3; //Hang so do dai giam di
+    private static final int WIDTH_DECREASE = 20; //Hang so do dai giam di
 
     //Ham khoi tao
     public ShrinkPaddlePowerUp(int x, int y, int width, int height, double speed) {
@@ -14,14 +16,15 @@ public class ShrinkPaddlePowerUp extends PowerUp {
     }
 
     @Override
-    public void render() {
-        // Logic ve powerup tang kich thuoc (lam sau)
+    public void render(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect(x, y, width, height);
     }
 
     @Override
     public void applyEffect(Paddle paddle) {
         int newWidth = paddle.getWidth() - WIDTH_DECREASE;
-        paddle.setWidth(Math.max(newWidth, 2)); //Chieu rong toi thieu la 2
+        paddle.setWidth(Math.max(newWidth, 20)); //Chieu rong toi thieu la 20 pixel
     }
 
     @Override

@@ -1,6 +1,7 @@
 package arkanoid.model.brick;
 
 import arkanoid.model.GameObject;
+import java.awt.Graphics;
 
 /**
  * Lop truu tuong cho tat ca cac loai gach.
@@ -33,4 +34,7 @@ public abstract class Brick extends GameObject {
     public void update() {
         //Gach khong di chuyen
     }
+
+    @Override
+    public abstract void render(Graphics g);
 }

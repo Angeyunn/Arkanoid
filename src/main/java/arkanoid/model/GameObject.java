@@ -1,7 +1,7 @@
 package arkanoid.model;
 
 import java.awt.Rectangle; //dùng để xử lí va chạm
-
+import java.awt.Graphics; // Them thu vien Graphic
 /**
  * Lớp trừu tượng cho tất cả đối tượng trong game.
  * Chứa các properties và method chung như vị trí, kich thước,...
@@ -24,10 +24,11 @@ public abstract class GameObject {
     public abstract void update();
 
     //Phuong thuc ve doi tuong
-    public abstract void render();
+    public abstract void render(Graphics g);
 
     //Xu li va cham
     public Rectangle getBounds() {
+
         return new Rectangle(x, y, width, height);
     }
 

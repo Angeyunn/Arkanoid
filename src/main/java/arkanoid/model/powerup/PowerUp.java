@@ -2,6 +2,7 @@ package arkanoid.model.powerup;
 
 import arkanoid.model.MovableObject;
 import arkanoid.model.Paddle;
+import java.awt.Graphics;
 
 /**
  * Lop truu tuong vat pham power up
@@ -22,7 +23,7 @@ public abstract class PowerUp extends MovableObject {
     }
 
     @Override
-    public abstract void render();
+    public abstract void render(Graphics g);
 
     //Ap dung hieu ung len paddle
     public abstract void applyEffect(Paddle paddle);

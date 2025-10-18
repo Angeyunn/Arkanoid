@@ -1,5 +1,7 @@
 package arkanoid.model;
 
+import java.awt.Graphics;
+import java.awt.Color;
 /**
  * Dai dien cho paddle nguoi choi dieu khien.
  */
@@ -19,8 +21,9 @@ public class Paddle extends MovableObject {
     }
 
     @Override
-    public void render() {
-        //Ve hinh anh Paddle (lam sau)
+    public void render(Graphics g) {
+        g.setColor(Color.BLUE); //Paddle mau xanh duong
+        g.fillRect(x, y, width, height); //Ve hinh chu nhat
     }
 
     //Di chuyen sang hai ben

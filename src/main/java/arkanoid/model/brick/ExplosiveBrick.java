@@ -1,5 +1,8 @@
 package arkanoid.model.brick;
 
+import java.awt.Graphics;
+import java.awt.Color;
+
 /**
  * Gach phat no ra cac huong xung quanh
  */
@@ -10,8 +13,11 @@ public class ExplosiveBrick extends Brick {
     }
 
     @Override
-    public void render() {
-        // TODO: Logic vẽ gạch nổ
+    public void render(Graphics g) {
+        g.setColor(Color.ORANGE); //Gach mau cam
+        g.fillRect(x, y, width, height);
+        g.setColor(Color.BLACK);
+        g.drawRect(x, y, width, height);
     }
 
     // Giup GameManager biet day la gach no

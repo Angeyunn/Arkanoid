@@ -1,5 +1,7 @@
 package arkanoid.model;
 
+import java.awt.Color;
+import java.awt.Graphics;
 /**
  * Dai dien cho qua bong.
  */
@@ -12,12 +14,14 @@ public class Ball extends MovableObject {
 
     @Override
     public void update() {
+
         move();
     }
 
     @Override
-    public void render() {
-        //Ve hinh anh qua bong (lam sau)
+    public void render(Graphics g) {
+        g.setColor(Color.WHITE); //Bong mau trang
+        g.fillRect(x, y, width, height); //Ve hinh tron
     }
 
     //Dao nguoc huong di chuyen khi va cham

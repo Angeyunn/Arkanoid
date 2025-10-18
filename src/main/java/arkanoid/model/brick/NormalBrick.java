@@ -1,5 +1,8 @@
 package arkanoid.model.brick;
 
+import java.awt.Graphics;
+import java.awt.Color;
+
 /**
  * Gach binh thuong (1 lan va cham de pha huy).
  */
@@ -9,7 +12,10 @@ public class NormalBrick extends Brick {
     }
 
     @Override
-    public void render() {
-        //Ve hinh anh gach (lam sau)
+    public void render(Graphics g) {
+        g.setColor(Color.CYAN); //Gach mau xanh lam
+        g.fillRect(x, y, width, height);
+        g.setColor(Color.BLACK); //Vien mau den
+        g.drawRect(x, y, width, height);
     }
 }
