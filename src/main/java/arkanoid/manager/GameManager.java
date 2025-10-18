@@ -18,20 +18,20 @@ import java.awt.event.KeyEvent;
  * Lop quan li chinh, dieu khien logic trong game
  */
 public class GameManager {
-    private final int width;
+    private final int width; //Kich thuoc cua man hinh
     private final int height;
 
-    private Paddle paddle;
-    private Ball ball;
-    private List<Brick> bricks;
-    private List<PowerUp> powerUps;
+    private Paddle paddle; //Doi tuong thanh do
+    private Ball ball; //Doi tuong qua bong
+    private List<Brick> bricks; //Danh sach chua cac vien gach tren man hinh
+    private List<PowerUp> powerUps; //Danh sach chua cac power-up xuat hien
+    private int score; //Diem cua nguoi choi
+    private int lives; //So mang con lai
+    private GameState gameState; //Trang thai hien tai cua game (PLAYING, OVER, ...)
 
-    private int score;
-    private int lives;
-    private GameState gameState;
+    private final Random rand = new Random(); // Tao ra cac su kien ngau nhien (roi powerup,..)
 
-    private final Random rand = new Random();
-
+    //Phuong thuc khoi tao man hinh
     public GameManager(int width, int height) {
         this.width = width;
         this.height = height;
@@ -46,15 +46,16 @@ public class GameManager {
         return height;
     }
 
-    //Thiet lap man choi
+    //Thiet lap man choi, dat moi thu ve trang thai ban dau
     public void startGame() {
+        //Dat vi tri ban dau cua paddle va ball
         paddle = new Paddle(width / 2 - 5, height - 3, 10, 1, 1);
         ball = new Ball(width / 2, height / 2, 1, 1);
         ball.setVelocity(1, -1); //Cho bong di chuyen cheo len
 
-        bricks = new ArrayList<>();
-        powerUps = new ArrayList<>(); //Khoi tao danh sach powerup
-        //Tao man choi da dang hon de thu nghiem
+        bricks = new ArrayList<>(); //Danh sach gach
+        powerUps = new ArrayList<>(); //danh sach powerup
+        //Tao man choi voi 5 hang gach khac nhau
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 10; j++) {
                 int brickX = j * 5 + 2;
@@ -75,9 +76,9 @@ public class GameManager {
         gameState = GameState.PLAYING;
     }
 
-    //Cap nhat trang thai game moi frame
+    //Cap nhat trang thai game
     public void updateGame() {
-        //Gioi han di chuyen cua paddle
+        //Gioi han di chuyen cua paddle ben trong khung hinh
         if (paddle.getX() <= 1) {
             paddle.setX(1);
         }
@@ -92,7 +93,7 @@ public class GameManager {
             powerUp.update();
         }
 
-        checkCollision();
+        checkCollision(); //Xu li cac va cham xay ra trong khung hinh do
     }
 
     //Xu li input tu terminal
@@ -106,13 +107,13 @@ public class GameManager {
 
     // Phuong thuc di chuyen ranh rieng cho phien ban GUI
     public void handleInput(int keyCode, boolean isPressed) {
-        if (keyCode == java.awt.event.KeyEvent.VK_LEFT) {
+        if (keyCode == java.awt.event.KeyEvent.VK_LEFT || keyCode == java.awt.event.KeyEvent.VK_A) {
             if (isPressed) {
                 paddle.moveLeft();
             } else {
                 paddle.stopMoving();
             }
-        } else if (keyCode == java.awt.event.KeyEvent.VK_RIGHT) {
+        } else if (keyCode == java.awt.event.KeyEvent.VK_RIGHT || keyCode == java.awt.event.KeyEvent.VK_D) {
             if (isPressed) {
                 paddle.moveRight();
             } else {
@@ -156,17 +157,20 @@ public class GameManager {
         }
 
         //Va cham voi gach
-        Iterator<Brick> it = bricks.iterator();
+        Iterator<Brick> it = bricks.iterator(); //Bien 'it' dai dien cho vien gach
         while (it.hasNext()) {
-            Brick brick = it.next();
+            Brick brick = it.next(); //Lay ra vien gach hien tai de kiem tra
+            // Neu vien gach chua bi pha huy và bound cua vien gach giao voi bound cua qua bong
             if (brick.isActive() && ballBounds.intersects(brick.getBounds())) {
+                //Xu li huong nay cua bong
                 handleBallBrickCollision(ball, brick);
-                    brick.takeHit();
-                    if (brick.isDestroyed()) {
-                        score += 10;
-                        if (brick instanceof ExplosiveBrick) {
-                            explode(brick);
-                        }
+                brick.takeHit();
+                //Kiem tra vien gach bi pha hay chua
+                if (brick.isDestroyed()) {
+                    score += 10;
+                    if (brick instanceof ExplosiveBrick) {
+                        explode(brick);
+                    }
                     spawnPowerUp(brick.getX(), brick.getY());
                 }
                     break;
@@ -200,22 +204,33 @@ public class GameManager {
     private void handleBallBrickCollision(Ball ball, Brick brick) {
         Rectangle brickBounds = brick.getBounds();
         Rectangle ballBounds = ball.getBounds();
+        //Tao ra hinh chu nhat dai dien cho phan giao nhau giua brickBounds va ballBounds
         Rectangle intersection = ballBounds.intersection(brickBounds);
 
         //Va cham tu canh tren hoac duoi cua gach
+        //Xay ra khi intersection co chieu dai > rong
         if (intersection.width > intersection.height) {
-            ball.reverseYVelocity();
-        } else { //Va cham tu canh  trai hoac phai
+            ball.reverseYVelocity(); //
+        } else {
+            //Va cham tu canh  trai hoac phai
+            //Xay ra khi intersection co chieu dai < rong
             ball.reverseXVelocity();
         }
     }
     //Logic cua gach no
+    //Tao mot vu no lan pha huy cac vien gach xung quanh
     private void explode(Brick explosiveBrick) {
-        Rectangle explosionZone = new Rectangle(explosiveBrick.getX() - 2,
+        //Tao ra vung anh huong cua vu no la hinh chu nhat
+        Rectangle explosionZone = new Rectangle(
+                //Lay x, y, width, height cua vien gach no vua bi pha
+                //Tao ra mot hinh chu nhat moi lon hon 2 don vi kich thuoc
+                explosiveBrick.getX() - 2,
                 explosiveBrick.getY() -2,
                 explosiveBrick.getWidth() + 4,
                 explosiveBrick.getHeight() +4);
+        //Kiem tra tat ca cac vien gach trong man choi
         for (Brick brick : bricks) {
+            //Neu vien gach van con && khong phai la gach khong the pha huy && nam trong vu no -> xoa vien gach
             if (brick.isActive() && !(brick instanceof UnbreakableBrick) && explosionZone.intersects(brick.getBounds())) {
                 brick.setActive(false);
                 score += 5; //Tang diem khi pha duoc gach
@@ -224,9 +239,11 @@ public class GameManager {
     }
 
     //logic tao powerup
-        private void spawnPowerUp(int x, int y) {
-            if (rand.nextInt(100) < 30) {
-                if (rand.nextBoolean()) {
+    //Nhan x, y la toa do vien gach vua bi pha vo
+    private void spawnPowerUp(int x, int y) {
+        //Random 30%
+        if (rand.nextInt(100) < 30) {
+            if (rand.nextBoolean()) {
                     powerUps.add(new ExpandPaddlePowerUp(x, y, 3, 1, 0.5));
                 } else {
                     powerUps.add(new ShrinkPaddlePowerUp(x, y, 3, 1, 0.5));
