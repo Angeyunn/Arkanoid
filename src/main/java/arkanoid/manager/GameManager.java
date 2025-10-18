@@ -48,26 +48,40 @@ public class GameManager {
 
     //Thiet lap man choi, dat moi thu ve trang thai ban dau
     public void startGame() {
+        //Kich thuoc paddle va ball bang pixel
+        int paddleWidth = 100;
+        int paddleHeight = 20;
+        int ballSize = 15;
         //Dat vi tri ban dau cua paddle va ball
-        paddle = new Paddle(width / 2 - 5, height - 3, 10, 1, 1);
-        ball = new Ball(width / 2, height / 2, 1, 1);
+        paddle = new Paddle(width / 2 - height / 2, height - 50, paddleWidth, paddleHeight, 8);
+        ball = new Ball(width / 2, height / 2, ballSize, 6);
         ball.setVelocity(1, -1); //Cho bong di chuyen cheo len
 
         bricks = new ArrayList<>(); //Danh sach gach
         powerUps = new ArrayList<>(); //danh sach powerup
-        //Tao man choi voi 5 hang gach khac nhau
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 10; j++) {
-                int brickX = j * 5 + 2;
-                int brickY = i * 2 + 2;
+
+        int brickWidth = 60;
+        int brickHeight = 20;
+        int numCols = 10;
+        int numRows = 5;
+        int padding = 5;
+        int offsetTop = 50; //Khoang cach tu dinh den man hinh
+        int offsetLeft = (width - (numCols * (brickWidth + padding))) / 2; //Can giua
+
+        //Tao man choi
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                //Tao cac khoi gach
+                int brickX = offsetLeft + j * (brickWidth + padding);
+                int brickY = offsetTop + i * (brickHeight + padding);
                 if (i == 0) {
-                    bricks.add(new UnbreakableBrick(brickX, brickY, 4, 1));
+                    bricks.add(new UnbreakableBrick(brickX, brickY, brickWidth, brickHeight));
                 } else if (i == 1) {
-                    bricks.add(new ExplosiveBrick(brickX, brickY, 4, 1));
+                    bricks.add(new ExplosiveBrick(brickX, brickY, brickWidth, brickHeight));
                 } else if (i == 2) {
-                    bricks.add(new StrongBrick(brickX, brickY, 4, 1));
+                    bricks.add(new StrongBrick(brickX, brickY, brickWidth, brickHeight));
                 } else {
-                    bricks.add(new NormalBrick(brickX, brickY, 4, 1));
+                    bricks.add(new NormalBrick(brickX, brickY, brickWidth, brickHeight));
                 }
             }
         }
@@ -79,11 +93,11 @@ public class GameManager {
     //Cap nhat trang thai game
     public void updateGame() {
         //Gioi han di chuyen cua paddle ben trong khung hinh
-        if (paddle.getX() <= 1) {
-            paddle.setX(1);
+        if (paddle.getX() <= 0) {
+            paddle.setX(0);
         }
-        if (paddle.getX() + paddle.getWidth() >= width - 1) {
-            paddle.setX(width - 1 - paddle.getWidth());
+        if (paddle.getX() + paddle.getWidth() >= width) {
+            paddle.setX(width - paddle.getWidth());
         }
 
         paddle.update();
@@ -128,19 +142,20 @@ public class GameManager {
         Rectangle paddleBounds = paddle.getBounds();
 
         //Va cham voi tuong
-        if (ball.getX() <= 1) {
-            ball.setX(1); //Chong dinh vao tuong
+        if (ball.getX() <= 0) {
+            ball.setX(0); //Chong dinh vao tuong
             ball.reverseXVelocity();
         }
-        if (ball.getX() >= width - 2) {
-            ball.setX(width - 2); //Chong dinh vao tuong
+        if (ball.getX() >= width - ball.getWidth()) {
+            ball.setX(width - ball.getWidth()); //Chong dinh vao tuong
             ball.reverseXVelocity();
         }
-        if (ball.getY() <= 1) {
+        if (ball.getY() <= 0) {
+            ball.setY(0);
             ball.reverseYVelocity();
         }
         //Bong cham day -> giam so mang
-        if (ball.getY() >= height - 1) {
+        if (ball.getY() >= height - ball.getHeight()) {
             lives--;
             if (lives > 0) { //Neu con mang thi choi tiep
                 resetBallAndPaddle();
@@ -193,11 +208,12 @@ public class GameManager {
         bricks.removeIf(brick -> !brick.isActive());
         powerUps.removeIf(powerUp -> !powerUp.isActive());
     }
+
     private void resetBallAndPaddle() {
         ball.setX(width / 2);
         ball.setY(height / 2);
         ball.setVelocity(1, -1); //Reset huong bong
-        paddle.setX(width / 2 - paddle.getOriginalWidth() / 2);
+        paddle.setX(paddle.getOriginalWidth());
         paddle.setWidth(paddle.getOriginalWidth());
     }
     //Xu li va cham ball va brick
