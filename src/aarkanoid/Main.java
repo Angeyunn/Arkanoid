@@ -14,7 +14,6 @@ public class Main extends JFrame {
     }
 
     private void initUI() {
-        // SỬ DỤNG KÍCH THƯỚC MỚI TỪ GAMEMANAGER
         setTitle("Arkanoid Game - BIG SCREEN");
         setSize(GameManager.getScreenWidth(), GameManager.getScreenHeight());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -58,7 +57,6 @@ public class Main extends JFrame {
         }).start();
     }
 
-    // Custom panel for rendering
     private class GamePanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
