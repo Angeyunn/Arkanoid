@@ -21,13 +21,13 @@ public abstract class GameObject {
         texturePath = null;
     }
 
-    public GameObject(int x, int y, int width, int height, BufferedImage texture) {
+    public GameObject(int x, int y, int width, int height, String texturePath) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         bounds = new Rectangle(x, y, width, height);
-        this.texture = texture;
+        this.texturePath = texturePath;
         loadTexture();
     }
 
@@ -56,8 +56,8 @@ public abstract class GameObject {
         g2d.dispose();
     }
 
-    public abstract Color getFallbackColor();
-    public abstract render(Graphics g);
+    protected abstract Color getFallbackColor();
+    public abstract void render(Graphics g);
 
     public void update() {
          bounds.setLocation(x, y);
@@ -67,6 +67,7 @@ public abstract class GameObject {
     public int getY() {return y;}
     public int getWidth() {return width;}
     public int getHeight() {return height;}
+    public Rectangle getBounds() {return bounds;}
 
     public BufferedImage getTexture() {return texture;}
 
