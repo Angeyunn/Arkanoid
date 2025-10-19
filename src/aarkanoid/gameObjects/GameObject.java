@@ -56,5 +56,32 @@ public abstract class GameObject {
         g2d.dispose();
     }
 
+    public abstract Color getFallbackColor();
+    public abstract render(Graphics g);
 
+    public void update() {
+         bounds.setLocation(x, y);
+    }
+
+    public int getX() {return x;}
+    public int getY() {return y;}
+    public int getWidth() {return width;}
+    public int getHeight() {return height;}
+
+    public BufferedImage getTexture() {return texture;}
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+        bounds.setLocation(x, y);
+    }
+
+    public void setX(int x) {
+        this.x = x;
+        bounds.x = x;
+    }
+    public void setY(int y) {
+        this.y = y;
+        bounds.y = y;
+    }
 }
