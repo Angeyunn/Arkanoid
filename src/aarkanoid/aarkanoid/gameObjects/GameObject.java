@@ -60,7 +60,7 @@ public abstract class GameObject {
     public abstract void render(Graphics g);
 
     public void update() {
-         bounds.setLocation(x, y);
+        bounds.setLocation(x, y);
     }
 
     public int getX() {return x;}
