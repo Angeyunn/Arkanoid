@@ -31,10 +31,15 @@ public class GameManager {
 
     private final Random rand = new Random(); // Tao ra cac su kien ngau nhien (roi powerup,..)
 
+    private SoundManager soundManager; //soundManager
+
     //Phuong thuc khoi tao man hinh
     public GameManager(int width, int height) {
         this.width = width;
         this.height = height;
+        this.soundManager = new SoundManager();
+        this.soundManager.loadSound("bounce.wav");
+        this.soundManager.loadSound("break.wav");
     }
 
     //Getter va setter
@@ -46,16 +51,20 @@ public class GameManager {
         return height;
     }
 
+    public GameState getGameState() {
+        return gameState;
+    }
+
     //Thiet lap man choi, dat moi thu ve trang thai ban dau
     public void startGame() {
         //Kich thuoc paddle va ball bang pixel
         int paddleWidth = 100;
         int paddleHeight = 20;
-        int ballSize = 15;
+        int ballSize = 20;
         //Dat vi tri ban dau cua paddle va ball
-        paddle = new Paddle(width / 2 - height / 2, height - 50, paddleWidth, paddleHeight, 8);
-        ball = new Ball(width / 2, height / 2, ballSize, 6);
-        ball.setVelocity(1, -1); //Cho bong di chuyen cheo len
+        paddle = new Paddle(width / 2 - paddleWidth / 2, height - 50, paddleWidth, paddleHeight, 8);
+        ball = new Ball(width / 2, height / 2, ballSize, 5);
+        ball.setDirection(1, -1); //Cho bong di chuyen cheo len
 
         bricks = new ArrayList<>(); //Danh sach gach
         powerUps = new ArrayList<>(); //danh sach powerup
@@ -92,6 +101,11 @@ public class GameManager {
 
     //Cap nhat trang thai game
     public void updateGame() {
+        //Chi update logic khi game dang chay
+        if (gameState != GameState.PLAYING) {
+            return;
+        }
+
         //Gioi han di chuyen cua paddle ben trong khung hinh
         if (paddle.getX() <= 0) {
             paddle.setX(0);
@@ -121,17 +135,24 @@ public class GameManager {
 
     // Phuong thuc di chuyen ranh rieng cho phien ban GUI
     public void handleInput(int keyCode, boolean isPressed) {
-        if (keyCode == java.awt.event.KeyEvent.VK_LEFT || keyCode == java.awt.event.KeyEvent.VK_A) {
-            if (isPressed) {
-                paddle.moveLeft();
-            } else {
-                paddle.stopMoving();
+        if (gameState == GameState.PLAYING) {
+            if (keyCode == java.awt.event.KeyEvent.VK_LEFT || keyCode == java.awt.event.KeyEvent.VK_A) {
+                if (isPressed) {
+                    paddle.moveLeft();
+                } else {
+                    paddle.stopMoving();
+                }
+            } else if (keyCode == java.awt.event.KeyEvent.VK_RIGHT || keyCode == java.awt.event.KeyEvent.VK_D) {
+                if (isPressed) {
+                    paddle.moveRight();
+                } else {
+                    paddle.stopMoving();
+                }
             }
-        } else if (keyCode == java.awt.event.KeyEvent.VK_RIGHT || keyCode == java.awt.event.KeyEvent.VK_D) {
-            if (isPressed) {
-                paddle.moveRight();
-            } else {
-                paddle.stopMoving();
+        }
+        else if (gameState == GameState.GAME_OVER || gameState == GameState.GAME_WIN) {
+            if (keyCode == KeyEvent.VK_ENTER && isPressed) {
+                startGame();
             }
         }
     }
@@ -145,14 +166,17 @@ public class GameManager {
         if (ball.getX() <= 0) {
             ball.setX(0); //Chong dinh vao tuong
             ball.reverseXVelocity();
+            soundManager.play("bounce.wav");
         }
         if (ball.getX() >= width - ball.getWidth()) {
             ball.setX(width - ball.getWidth()); //Chong dinh vao tuong
             ball.reverseXVelocity();
+            soundManager.play("bounce.wav");
         }
         if (ball.getY() <= 0) {
             ball.setY(0);
             ball.reverseYVelocity();
+            soundManager.play("bounce.wav");
         }
         //Bong cham day -> giam so mang
         if (ball.getY() >= height - ball.getHeight()) {
@@ -169,6 +193,7 @@ public class GameManager {
             ball.reverseYVelocity();
             //Dat lai vi tri bong ngay tren paddle
             ball.setY(paddle.getY() - ball.getHeight());
+            soundManager.play("bounce.wav");
         }
 
         //Va cham voi gach
@@ -183,10 +208,13 @@ public class GameManager {
                 //Kiem tra vien gach bi pha hay chua
                 if (brick.isDestroyed()) {
                     score += 10;
+                    soundManager.play("break.wav");
                     if (brick instanceof ExplosiveBrick) {
                         explode(brick);
                     }
                     spawnPowerUp(brick.getX(), brick.getY());
+                } else {
+                    soundManager.play("bounce.wav");
                 }
                     break;
             }
@@ -197,7 +225,7 @@ public class GameManager {
             PowerUp powerUp = powerUpIterator.next();
             //Neu power up va cham voi paddle
             if (powerUp.isActive() && powerUp.getBounds().intersects(paddleBounds)) {
-                powerUp.applyEffect(paddle);
+                paddle.applyPowerUp(powerUp);
                 powerUp.setActive(false); //Xoa power up sau khi thu thp xong
             }
             //Xoa power up neu no roi khoi man hinh
@@ -207,14 +235,19 @@ public class GameManager {
         }
         bricks.removeIf(brick -> !brick.isActive());
         powerUps.removeIf(powerUp -> !powerUp.isActive());
+
+        //Dieu kien thang: tat ca cac gach deu la gach khong the pha
+        if (bricks.stream().allMatch(b -> b instanceof UnbreakableBrick)) {
+            gameState = GameState.GAME_WIN;
+        }
     }
 
     private void resetBallAndPaddle() {
         ball.setX(width / 2);
         ball.setY(height / 2);
-        ball.setVelocity(1, -1); //Reset huong bong
-        paddle.setX(paddle.getOriginalWidth());
-        paddle.setWidth(paddle.getOriginalWidth());
+        ball.setDirection(1, -1); //Reset huong bong
+        paddle.setX(width / 2 - paddle.getOriginalWidth() / 2);
+        paddle.resetPowerUp();
     }
     //Xu li va cham ball va brick
     private void handleBallBrickCollision(Ball ball, Brick brick) {
@@ -248,7 +281,7 @@ public class GameManager {
         for (Brick brick : bricks) {
             //Neu vien gach van con && khong phai la gach khong the pha huy && nam trong vu no -> xoa vien gach
             if (brick.isActive() && !(brick instanceof UnbreakableBrick) && explosionZone.intersects(brick.getBounds())) {
-                brick.setActive(false);
+                brick.takeHit();
                 score += 5; //Tang diem khi pha duoc gach
             }
         }
@@ -260,9 +293,9 @@ public class GameManager {
         //Random 30%
         if (rand.nextInt(100) < 30) {
             if (rand.nextBoolean()) {
-                    powerUps.add(new ExpandPaddlePowerUp(x, y, 3, 1, 0.5));
+                    powerUps.add(new ExpandPaddlePowerUp(x, y, 15, 15, 2));
                 } else {
-                    powerUps.add(new ShrinkPaddlePowerUp(x, y, 3, 1, 0.5));
+                    powerUps.add(new ShrinkPaddlePowerUp(x, y, 15, 15, 2));
                 }
             }
         }
@@ -284,6 +317,6 @@ public class GameManager {
     }
 
     public enum GameState {
-        MENU, PLAYING, PAUSED, GAME_OVER
+        MENU, PLAYING, PAUSED, GAME_OVER, GAME_WIN;
     }
 }

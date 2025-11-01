@@ -2,26 +2,25 @@ package arkanoid.model.brick;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import arkanoid.utils.ImageLoader;
+
 /**
  * Lop gach cung hon (can 2 lan de pha huy)
  */
 public class StrongBrick extends Brick {
+    private BufferedImage image; //Bien luu anh
 
     //Ham khoi tao
     public StrongBrick(int x, int y, int width, int height) {
         super(x, y, width, height, 2);
+        this.image = ImageLoader.loadImage("brick_strong.png");
     }
 
     @Override
     public void render(Graphics g) {
-        //Ve mau dua tren hitPoint
-        if (hitPoints == 2) {
-            g.setColor(Color.GRAY);
-        } else {
-            g.setColor(Color.LIGHT_GRAY);
+        if (image != null) {
+            g.drawImage(image, x, y, width, height, null);
         }
-        g.fillRect(x, y, width, height);
-        g.setColor(Color.BLACK);
-        g.drawRect(x, y, width, height);
     }
 }

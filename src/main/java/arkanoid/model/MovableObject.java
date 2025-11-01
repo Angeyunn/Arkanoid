@@ -22,9 +22,16 @@ public abstract class MovableObject extends GameObject {
         y += velocityY;
     }
 
-    //Cap nhat van toc
-    public void setVelocity(double velocityX, double velocityY) {
-        this.velocityX = velocityX;
-        this.velocityY = velocityY;
+    //Phuong thuc tinh toan van toc dua tren speed
+    public void setDirection(double X, double Y) {
+        //Chuan hoa vector huong
+        double length = Math.sqrt(X * X + Y * Y);
+        if (length != 0) {
+            this.velocityX = (X / length) * speed;
+            this.velocityY = (Y / length) * speed;
+        } else {
+            this.velocityX = 0;
+            this.velocityY = 0;
+        }
     }
 }
