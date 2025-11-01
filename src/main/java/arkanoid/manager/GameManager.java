@@ -157,6 +157,16 @@ public class GameManager {
         }
     }
 
+    //Phuong thuc pause game
+    public void togglePause() {
+        if (gameState == GameState.PLAYING) {
+            gameState = GameState.PAUSED;
+        } else if (gameState == GameState.PAUSED) {
+            gameState = GameState.PLAYING;
+        }
+    }
+
+
     //Xu li va cham
     private void checkCollision() {
         Rectangle ballBounds = ball.getBounds();

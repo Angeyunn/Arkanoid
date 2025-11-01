@@ -102,6 +102,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void keyPressed(KeyEvent e) {
         //Khi phim duoc nhan, bao cho gameManager
         gameManager.handleInput(e.getKeyCode(), true);
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            gameManager.togglePause();
+        }
+
     }
 
     @Override

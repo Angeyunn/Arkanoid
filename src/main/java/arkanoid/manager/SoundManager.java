@@ -50,4 +50,15 @@ public class SoundManager {
             clip.start(); //Bat dau am thanh
         }
     }
+
+    //Phuong thuc cleanup de don am thanh khi thoat game
+    public void cleanup() {
+        for (Clip clip : clips.values()) {
+            if (clip != null) {
+                clip.close();
+            }
+        }
+        clips.clear();
+    }
+
 }
