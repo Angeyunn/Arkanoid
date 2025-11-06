@@ -20,7 +20,7 @@ public class MainTerminal {
 
         //2. Bat dau game
         inputHandler.start();
-        gameManager.startGame();
+        gameManager.loadLevelAndStart(1);
         renderer.clearConsole();
 
         //3. Game Loop

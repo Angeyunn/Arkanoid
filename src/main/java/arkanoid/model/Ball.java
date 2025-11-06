@@ -28,6 +28,16 @@ public class Ball extends MovableObject {
             g.drawImage(image, (int) x, (int) y, width, height, null);
         }
     }
+    public Ball cloneBall() {
+        //Tao mot qua bong moi cung vi tri, toc do
+        Ball newBall = new Ball(this.x, this.y, this.width, this.speed);
+
+        //Sao chep van toc hien tai
+        newBall.velocityX = this.velocityX;
+        newBall.velocityY = this.velocityY;
+
+        return newBall;
+    }
 
     //Dao nguoc huong di chuyen khi va cham
     public void reverseXVelocity() {

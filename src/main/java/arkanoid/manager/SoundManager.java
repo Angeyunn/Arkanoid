@@ -18,6 +18,8 @@ public class SoundManager {
         clips = new HashMap<>();
     }
 
+    private boolean isMuted = false;
+
     //Phuong thuc tai mot file am thanh vao cache
     public void loadSound(String sound) {
 
@@ -40,6 +42,9 @@ public class SoundManager {
 
     //Phuong thuc phat am thanh da co trong cache
     public void play(String sound) {
+        if (isMuted) {
+            return;
+        }
         Clip clip = clips.get(sound); //Lay am thanh tu cache
         if (clip != null) {
             //Neu tim thay co am thanh dang phat, se dung lai ngay lap tuc
@@ -51,6 +56,13 @@ public class SoundManager {
         }
     }
 
+    public void toggleMute() {
+        isMuted = !isMuted;
+    }
+
+    public boolean isMuted() {
+        return isMuted;
+    }
     //Phuong thuc cleanup de don am thanh khi thoat game
     public void cleanup() {
         for (Clip clip : clips.values()) {
